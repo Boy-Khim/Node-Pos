@@ -3,9 +3,32 @@ import { db } from "../config/helper.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { Result } from "pg";
 dotenv.config();
 
+export const getListUser = async (req: Request, res: Response) => {
+  try {
+    const result = await db.query(
+      `
+  SELECT
+      u.id,
+      u.name,
+      u.username,
+      u.is_active,
+      r.name AS role_name
+  FROM users u
+  INNER JOIN roles r
+      ON u.role_id = r.id
+  `,
+    );
+    return res.status(201).json({
+      message: "List User",
+      user: result.rows,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
 export const register = async (req: Request, res: Response) => {
   try {
     const { name, username, password, is_active, role_id, create_by } =
