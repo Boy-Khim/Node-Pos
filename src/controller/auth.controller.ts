@@ -30,9 +30,21 @@ export const login = async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
 
-    const result = await db.query(`SELECT * FROM users WHERE username = $1`, [
-      username,
-    ]);
+    // const result = await db.query(`SELECT * FROM users WHERE username = $1`,
+    //   [
+    //   username,
+    // ]);
+    const result = await db.query(
+      `
+  SELECT
+    u.*,
+    r.name AS role_name
+  FROM "users" u
+  INNER JOIN roles r ON u.role_id = r.id
+  WHERE u.username = $1
+`,
+      [username],
+    );
     if (result.rows.length === 0) {
       return res.status(400).json({ message: "Username Don't not Exist" });
     }
@@ -58,7 +70,7 @@ export const login = async (req: Request, res: Response) => {
 };
 export const getProfile = async (req: Request, res: Response) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
 
     const result = await db.query("SELECT *FROM users WHERE id=$1", [id]);
     return res.status(200).json({
@@ -73,7 +85,7 @@ const getAccessToken = async (obj: any) => {
   const key = process.env.jwtKey as string;
 
   const access_token = await jwt.sign({ data: obj }, key, {
-    expiresIn: 180,
+    expiresIn: "1d",
   });
 
   return access_token;

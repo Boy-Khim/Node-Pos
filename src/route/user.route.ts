@@ -9,7 +9,7 @@ import {
 const router = Router();
 
 router.post("/register", register);
-router.get("/login", login);
+router.post("/login", login);
 router.get("/profile", validate_token(), getProfile); // ← and here
 
 export default router;
