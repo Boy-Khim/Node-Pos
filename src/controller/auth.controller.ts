@@ -141,3 +141,32 @@ export const validate_token = () => {
     }
   };
 };
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    await db.query("DELETE FROM users WHERE id=$1", [id]);
+    return res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+export const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { name, username, password, is_active, role_id, create_by } =
+      req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await db.query(
+      `UPDATE users SET name=$1, username=$2, password=$3, is_active=$4, role_id=$5, create_by=$6 WHERE id=$7 RETURNING *`,
+      [name, username, hashedPassword, is_active, role_id, create_by, id],
+    );
+    return res.status(200).json({
+      message: "User updated successfully",
+      user: result.rows[0],
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
