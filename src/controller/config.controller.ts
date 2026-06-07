@@ -10,6 +10,9 @@ export const getConfig = async (req: Request, res: Response) => {
     const supplier = await db.query(
       "SELECT id,name FROM supplier ORDER BY id DESC",
     );
+    const expenses_type = await db.query(
+      "SELECT id,name FROM expense_types ORDER BY id DESC",
+    );
     const brands = [
       { name: "Apple", country: "USA" },
       { name: "Samsung", country: "South Korea" },
@@ -34,6 +37,7 @@ export const getConfig = async (req: Request, res: Response) => {
         category: category.rows,
         supplier: supplier.rows,
         brands: brands,
+        expenses_type: expenses_type.rows,
       },
     });
   } catch (error) {

@@ -12,7 +12,6 @@ export const getListProduct = async (req: Request, res: Response) => {
 FROM products p
 LEFT JOIN categories c ON p.category_id = c.id
   `,
-      [],
     );
     return res.status(200).json({
       message: "List Product",

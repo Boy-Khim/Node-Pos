@@ -7,7 +7,8 @@ import authRoute from "./route/user.route.js";
 import supplierRoute from "./route/supplier.router.js";
 import configRoute from "./route/config.route.js";
 import productRoute from "./route/product.route.js";
-
+import customerRouter from "./route/customer.route.js";
+import expensesRouter from "./route/expence.route.js";
 const app = express();
 
 app.use(cors());
@@ -20,5 +21,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/suppliers", supplierRoute);
 app.use("/api/config", configRoute);
 app.use("/api/products", productRoute);
+app.use("/api/customers", customerRouter);
+app.use("/api/expenses", expensesRouter);
 
 export default app;
