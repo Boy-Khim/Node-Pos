@@ -3,9 +3,13 @@ import { db } from "../config/helper.js";
 
 export const getConfig = async (req: Request, res: Response) => {
   try {
-    const role = await db.query("SELECT name FROM roles");
-    const category = await db.query("SELECT name FROM categories");
-    const supplier = await db.query("SELECT name FROM supplier");
+    const role = await db.query("SELECT  id,name FROM roles ORDER BY id DESC");
+    const category = await db.query(`
+  SELECT id,name FROM categories ORDER BY id DESC
+`);
+    const supplier = await db.query(
+      "SELECT id,name FROM supplier ORDER BY id DESC",
+    );
     const brands = [
       { name: "Apple", country: "USA" },
       { name: "Samsung", country: "South Korea" },
