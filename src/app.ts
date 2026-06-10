@@ -9,6 +9,8 @@ import configRoute from "./route/config.route.js";
 import productRoute from "./route/product.route.js";
 import customerRouter from "./route/customer.route.js";
 import expensesRouter from "./route/expence.route.js";
+import employeesRouter from "./route/exployees.route.js";
+
 const app = express();
 
 app.use(cors());
@@ -23,5 +25,6 @@ app.use("/api/config", configRoute);
 app.use("/api/products", productRoute);
 app.use("/api/customers", customerRouter);
 app.use("/api/expenses", expensesRouter);
+app.use("/api/employees", employeesRouter);
 
 export default app;

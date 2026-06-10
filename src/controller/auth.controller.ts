@@ -77,19 +77,44 @@ export const login = async (req: Request, res: Response) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Password incorrect" });
     }
+    const permissions = await getListPermission(user.id);
+
     const obj = {
       data: result.rows[0],
-      permission: ["view_all", "delete", "update"],
+      permission: permissions,
     };
     return res.status(200).json({
       message: "Login successful",
       ...obj,
+
       access_token: await getAccessToken(obj),
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Server error" });
   }
+};
+export const getListPermission = async (user_ID: number) => {
+  const result = await db.query(
+    `
+    SELECT
+        p.name,
+        p.permission_group,
+        p.is_menu_web,
+        p.web_route_key
+    FROM permissions p
+    INNER JOIN role_permission pr
+        ON p.id = pr.permission_id
+    INNER JOIN roles r
+        ON pr.role_id = r.id
+    INNER JOIN user_role ur
+        ON r.id = ur.role_id
+    WHERE ur.user_id = $1
+    `,
+    [user_ID],
+  );
+
+  return result.rows;
 };
 export const getProfile = async (req: Request, res: Response) => {
   try {
@@ -113,7 +138,7 @@ const getAccessToken = async (obj: any) => {
 
   return access_token;
 };
-export const validate_token = () => {
+export const validate_token = (permission_name: string) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const authorization = req.headers.authorization;
     const key = process.env.jwtKey as string;
@@ -134,6 +159,8 @@ export const validate_token = () => {
           // console.log("JWT error:", error.message); // ← check what error you get
 
           return res.status(401).send({ message: "Unauthorized" }); // ← add return
+        }
+        if (permission_name) {
         } else {
           next();
         }
