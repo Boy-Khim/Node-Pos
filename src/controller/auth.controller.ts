@@ -138,7 +138,7 @@ const getAccessToken = async (obj: any) => {
 
   return access_token;
 };
-export const validate_token = (permission_name: string) => {
+export const validate_token = () => {
   return (req: Request, res: Response, next: NextFunction) => {
     const authorization = req.headers.authorization;
     const key = process.env.jwtKey as string;
@@ -159,8 +159,6 @@ export const validate_token = (permission_name: string) => {
           // console.log("JWT error:", error.message); // ← check what error you get
 
           return res.status(401).send({ message: "Unauthorized" }); // ← add return
-        }
-        if (permission_name) {
         } else {
           next();
         }
